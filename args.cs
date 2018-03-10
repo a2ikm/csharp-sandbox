@@ -9,16 +9,19 @@ public class Args
 {
   static public void Main ()
   {
-    var args = new List<string>();
+    var opts = ParseOptions(Environment.GetCommandLineArgs());
+    Console.WriteLine("opts = {" + String.Join(", ", from v in opts select v.Key + "=>" + v.Value) + "}");
+  }
+
+  static public Dictionary<string, string> ParseOptions(string[] args) {
     var opts = new Dictionary<string, string>();
 
-    var orig = System.Environment.GetCommandLineArgs();
-    for (int i = 0; i < orig.Length; i++) {
-      var arg = orig[i];
+    for (int i = 0; i < args.Length; i++) {
+      var arg = args[i];
       if (arg.Substring(0, 1) == "-") {
         var key = arg.Substring(1, arg.Length - 1);
-        if (i + 1 < orig.Length) {
-          var next = orig[i + 1];
+        if (i + 1 < args.Length) {
+          var next = args[i + 1];
           if (next.Substring(0, 1) == "-") {
             opts.Add(key, "");
           } else {
@@ -28,12 +31,9 @@ public class Args
         } else {
           opts.Add(key, "");
         }
-      } else {
-        args.Add(arg);
       }
     }
 
-    Console.WriteLine("args = [" + String.Join(", ", from v in args select v) + "]");
-    Console.WriteLine("opts = {" + String.Join(", ", from v in opts select v.Key + "=>" + v.Value) + "}");
+    return opts;
   }
 }
